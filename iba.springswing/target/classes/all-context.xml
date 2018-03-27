@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
+
+	<context:annotation-config />
+	<context:component-scan base-package="spring" />
+	
+	<bean id="doActionReplacer" class="replacers.DoActionReplacer"/>
+
+	<bean id="uiFrame" class="ui.UIFrame">
+		<property name="contentPane">
+			<ref bean="uiPanel" />
+		</property>
+		<property name="title">
+			<value>SpringUI</value>
+		</property>
+	</bean>
+
+	<bean id="uiPanel" class="ui.UIPanel" init-method="init">
+		<property name="axis">
+			<value>1</value>
+		</property>
+		<property name="panelComponents">
+			<list>
+				<ref bean="buttonPanel" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="buttonPanel" class="ui.UIPanel" init-method="init">
+		<property name="axis">
+			<value>0</value>
+		</property>
+		<property name="panelComponents">
+			<list>
+				<ref bean="changeColorButtonOne" />
+				<!-- <ref bean="changeColorButtonTwo" /> -->
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="changeColorButtonOne" class="button.ChangeColorButtonOne"
+		init-method="init">
+		<property name="actionListener">
+			<ref bean="changeColorButtonListenerOne" />
+		</property>
+		<property name="text">
+			<value>YELLOW</value>
+		</property>
+	</bean>
+
+	<bean id="changeColorButtonListenerOne" class="button.ChangeColorButtonListenerOne">
+		<constructor-arg ref="uiFrame" />
+		<constructor-arg ref="changeColorButtonOne" />
+		<replaced-method name="doAction" replacer="doActionReplacer"/>
+	</bean>
+
+	
+</beans>
